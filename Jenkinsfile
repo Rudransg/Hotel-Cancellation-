@@ -36,14 +36,6 @@ pipeline{
                 withCredentials([file(credentialsId: 'gcp-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]){
                     script{
                         sh '''
-                        # AUTO-FIX: Install gcloud (your missing piece)
-                        if ! command -v gcloud; then
-                        echo "Installing gcloud..."
-                        cd /tmp && curl -sSL https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-x86_64.tar.gz | tar xzf -
-                        /tmp/google-cloud-sdk/install.sh --quiet
-                        export PATH=$PATH:/tmp/google-cloud-sdk/bin
-                        fi
-                        
                         gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
                         gcloud config set project useful-lattice-483309-k5
                         gcloud auth configure-docker gcr.io --quiet
