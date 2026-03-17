@@ -48,7 +48,7 @@ pipeline{
                         gcloud config set project useful-lattice-483309-k5
                         gcloud auth configure-docker gcr.io --quiet
                         cd ${env.WORKSPACE}
-                        docker build -t gcr.io/{GCP_PROJECT}/ml-project:latest .
+                        docker build -t gcr.io/${GCP_PROJECT}/ml-project:latest .
                         docker push gcr.io/useful-lattice-483309-k5/ml-project:latest
                         '''
                     }
