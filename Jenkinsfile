@@ -47,8 +47,8 @@ pipeline{
                         gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
                         gcloud config set project useful-lattice-483309-k5
                         gcloud auth configure-docker gcr.io --quiet
-                        
-                        docker build -t gcr.io/useful-lattice-483309-k5/ml-project:latest .
+                        cd ${env.WORKSPACE}
+                        docker build -t gcr.io/{GCP_PROJECT}/ml-project:latest .
                         docker push gcr.io/useful-lattice-483309-k5/ml-project:latest
                         '''
                     }
