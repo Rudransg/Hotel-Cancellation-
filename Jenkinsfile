@@ -31,22 +31,38 @@ pipeline{
             }
         }
 
-        stage('Building and Pushing Docker Image to GCR'){
-            steps{
-                withCredentials([file(credentialsId: 'gcp-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]){
-                    script{
-                        sh '''
-                        gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
-                        gcloud config set project useful-lattice-483309-k5
+        stage('Building and Pushing Docker Image to GCR') {
+            steps {
+                withCredentials([file(credentialsId: 'gcp-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                    script {
+                        sh """
+                        set -e
+
+                        # Ensure gcloud is on PATH for this shell
+                        if ! command -v gcloud >/dev/null 2>&1; then
+                        # If installed under /google-cloud-sdk
+                        if [ -d /google-cloud-sdk/bin ]; then
+                            export PATH=\$PATH:/google-cloud-sdk/bin
+                        elif [ -d /tmp/google-cloud-sdk/bin ]; then
+                            export PATH=\$PATH:/tmp/google-cloud-sdk/bin
+                        fi
+                        fi
+
+                        gcloud --version
+
+                        gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS}
+                        gcloud config set project ${GCP_PROJECT}
                         gcloud auth configure-docker gcr.io --quiet
+
                         cd ${env.WORKSPACE}
                         docker build -t gcr.io/${GCP_PROJECT}/ml-project:latest .
-                        docker push gcr.io/useful-lattice-483309-k5/ml-project:latest
-                        '''
+                        docker push gcr.io/${GCP_PROJECT}/ml-project:latest
+                        """
                     }
                 }
             }
         }
+
 
         stage('Deploy to Google Cloud Run'){
             steps{
