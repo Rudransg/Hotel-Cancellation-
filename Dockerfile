@@ -4,7 +4,7 @@ ENV PYTHONDONTWRITEBYTECODE =1 \
     
 WORKDIR /app
 
-RUN apt-get-update && apt-get-install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     libgomp1 \
     && apt-get-clean \
     && rm -rf /var/lib/list/*
