@@ -65,11 +65,17 @@ pipeline{
 
 
         stage('Deploy to Google Cloud Run'){
-            steps{
-                withCredentials([file(credentialsId: 'gcp-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]){
-                    script{
+            steps {
+                withCredentials([file(credentialsId: 'gcp-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                    withEnv([
+                        'PATH=/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/google-cloud-sdk/bin'
+                    ]) {
                         sh '''
-                        # gcloud already installed above
+                        set -e
+                        gcloud --version
+                        gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+                        gcloud config set project useful-lattice-483309-k5
+                # gcloud already installed above
                         gcloud run deploy ml-project \
                             --image=gcr.io/useful-lattice-483309-k5/ml-project:latest \
                             --platform=managed \
