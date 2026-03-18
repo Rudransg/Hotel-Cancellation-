@@ -72,6 +72,14 @@ pipeline{
                     ]) {
                         sh '''
                         set -e
+                        if ! command -v gcloud >/dev/null 2>&1; then
+                        # If installed under /google-cloud-sdk
+                        if [ -d /google-cloud-sdk/bin ]; then
+                            export PATH=\$PATH:/google-cloud-sdk/bin
+                        elif [ -d /tmp/google-cloud-sdk/bin ]; then
+                            export PATH=\$PATH:/tmp/google-cloud-sdk/bin
+                        fi
+                        fi
                         gcloud --version
                         gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
                         gcloud config set project useful-lattice-483309-k5
